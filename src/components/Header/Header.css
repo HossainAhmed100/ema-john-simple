@@ -1,0 +1,7 @@
+nav .navbar-nav li a{
+    color: white !important;
+    }
+    .navbar-nav .nav-item.active .nav-link,
+    .navbar-nav .nav-item:hover .nav-link {
+        color: orange !important;
+    }
