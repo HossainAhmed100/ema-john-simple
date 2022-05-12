@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Product from '../Product/Product';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faArrowRight, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import './Shop.css';
+import Cart from '../Cart/Cart';
+import { addToDb, getStrodCard } from '../utilities/fakedb';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -11,10 +11,35 @@ const Shop = () => {
         fetch('products.json')
         .then(res => res.json())
         .then(data => setProducts(data))
-    })
-    const handleAddToCard = (product) => {
-        const newCart = [...cart, product];
+    }, [])
+    useEffect(() => {
+        const storedCart = getStrodCard();
+        const saveCart = [];
+        for(const id in storedCart){
+            const addedToCart = products.find(productt => productt.id === id);
+            if(addedToCart){
+                const quantity = storedCart[id];
+                addedToCart.quantity = quantity;
+                 saveCart.push(addedToCart);
+            }
+        }
+        setCart(saveCart)
+    }, [products])
+
+    const handleAddToCard = (selectProduct) => {
+        let newCart = [];
+        const exists = cart.find(product => product.id === selectProduct.id);
+        if(!exists){
+            selectProduct.quantity = 1;
+            newCart = [...cart, selectProduct];
+        }else{
+           const rest = cart.filter(product => product.id !== selectProduct.id);
+           exists.quantity = exists.quantity + 1; 
+           newCart = [...rest, selectProduct]
+        }
+       
         setCart(newCart); 
+        addToDb(selectProduct.id)
     }
     return (
         <div className='shop-container'>
@@ -28,21 +53,7 @@ const Shop = () => {
             </div>
             </div>
             <div className='cart-container'>
-            <nav>
-                <ul>
-                    <li><h3 className='text-center'>Order Summary</h3></li>
-                    <li><small>Selected Items : {cart.length}</small></li>
-                    <li><small>Total Price : $</small></li>
-                    <li><small>Shipping Charge : $</small></li>
-                    <li><small>Tax : $</small></li>
-                    <li className='mt-4'><h3>Grand Total : $</h3></li>
-                    <div className="d-grid gap-2 col-12 mx-auto">
-                    <button className="btn btn-danger btn-lg mt-4" type="button">Clear Cart <FontAwesomeIcon icon={faTrashCan} /></button>
-                    <button className="btn text-white btn-lg btn-warning" type="button">Review Order <FontAwesomeIcon icon={faArrowRight} /></button>
-                    </div>
-                </ul>
-            </nav>
-
+            <Cart cart={cart}></Cart>
             </div>
         </div>
     );

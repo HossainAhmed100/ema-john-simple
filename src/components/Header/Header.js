@@ -5,7 +5,7 @@ import logo from '../utilities/images/Logo.svg';
 const Header = () => {
     return (
         <div>
-            <nav className="navbar navbar-dark navbar-expand-sm bg-dark">
+            <nav className="navbar navbar-dark navbar-expand-sm fixed-top bg-dark">
         <div className="container">
         <a href="/" className="navbar-brand"><img src={logo} alt=""/></a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
